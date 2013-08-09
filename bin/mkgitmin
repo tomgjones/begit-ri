@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# Create a minimal non-empty git repository.
+
+set -e
+
+usage="mkgitmin DIR"
+
+bare=1
+
+while getopts B opt; do
+  if [ "$opt" = B ] ; then
+    echo unsetting bare
+    unset bare
+  fi
+done
+shift $((OPTIND-1))
+
+dir="$1"
+
+echo dir is $1
+
+if ! [ "$dir" ] ; then
+  echo $usage >&2
+  exit 64
+fi
+
+name=Nobody
+email="<nobody@invalid>"
+author="$name $email"
+
+# We ensure we get exact same commit ids each time.  Note that there are
+# dates for author and comitter, and only the former is currently
+# overridable on the command line.  The latter we do with an environment
+# variable.
+
+## Tea time.
+date="1970-01-01T16:00"
+
+GIT_COMMITTER_DATE=1970-01-01T16:00
+export GIT_COMMITTER_DATE
+
+tmpdir=$(mktemp -d)
+
+pushd "$tmpdir"
+git init
+
+# git doesn't allow setting these on the command line, but you can
+# set it via "git config" - yuck.  They end up in committer not author
+# fields.
+git config user.name "$name"
+git config user.email "$email"
+
+touch .gitignore
+git add .gitignore
+git commit -m 'initial commit to make repository non-empty' \
+ --author="$author" --date="$date" .gitignore
+git rm .gitignore
+git commit -m 'repo still non-empty, but the tree at HEAD is now empty again' \
+ --author="$author" --date="$date" .gitignore
+
+popd
+
+cloneopts=""
+
+if [ "$bare" ] ; then
+  cloneopts="$cloneopts --bare"
+fi
+
+# Could check that dir is empty if it exists.
+echo will do git clone $cloneopts "$tmpdir" "$dir"
+git clone $cloneopts "$tmpdir" "$dir"
