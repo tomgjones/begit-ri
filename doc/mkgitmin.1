@@ -1,0 +1,55 @@
+.Dd $Mdocdate$
+.Dt mkgitmin 1
+.Os
+.Sh NAME
+.Nm mkgitmin
+.Nd create minimal but non-empty git repository, repeatably
+.Sh SYNOPSIS
+.Nm
+.Op Fl B
+.Ar DIR
+.Sh DESCRIPTION
+.Nm
+creates a git repository with minimal content in the directory
+.Ar DIR .
+
+By default a bare repository is created; a non-bare 
+repository can be produced instead by giving the 
+.Op
+.Fl B
+option.
+
+Initialising empty git repositories can cause various issues and
+inconveniences when it comes to cloning, pushing, and fetching.
+This is even more the case when users are used to working with
+the default branches.  Initialising a minimal but non-empty
+repository fixes some of these inconveniences, because master
+exists and has a HEAD.
+
+Thus, when using a git service, users may prefer that new repositories
+have a minimal but non-empty history, rather than being empty.
+
+The history of the created repository 
+involves the addition and removal of an empty
+.Pa .gitignore
+file.  Authors email addresses are in an invalid domain, and
+all timestamps are set to tea time, shortly after the beginning
+of the epoch.
+.Nm
+output tends to be repeatable, in that repeated runs will result in
+HEAD being at a commit with the same sha-1 id,
+but the interface does not guarantee what the particular commit id will
+be.
+
+.Nm
+must be run on an empty or non-existent directory; running it on a
+non-empty directory is an error.
+
+.Sh EXAMPLES
+    $ mkgitmin /srv/git/repos/foo
+.Sh SEE ALSO
+.Xr begit 1
+.Sh VERSION
+Part of version 0.1 of the begit interface.
+.Sh AUTHORS
+Tom Jones <tom.jones@bccx.com>

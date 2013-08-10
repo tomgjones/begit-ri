@@ -1,0 +1,49 @@
+.Dd $Mdocdate$
+.Dt begit 1
+.Os
+.Sh NAME
+.Nm begit
+.Nd idempotent minimal non-empty git repository creation
+.Sh SYNOPSIS
+.Nm
+.Op Fl B
+.Ar DIR
+.Op Ar PROG Op ARGS ...
+.Sh DESCRIPTION
+.Nm
+does nothing if
+.Ar DIR
+is already a git repository.
+
+If
+.Ar DIR
+doesn't exist or is empty,
+.Nm
+will create a minimal (but not empty) git repository there.  If
+.Ar PROG
+is given, it will then be run with any
+.Ar ARGS
+as arguments.
+
+By default a bare repository is created; a non-bare 
+repository can be produced instead by giving the 
+.Fl B
+option.
+
+It is an error if
+.Ar DIR
+exists but is not a valid git repository.
+
+.Nm
+is idempotent: running it twice should result in the same state
+as running it once.
+
+.Sh EXAMPLES
+    $ begit -B ~/mynewrepo gitconfigapply user.name Bill
+.Sh SEE ALSO
+.Xr mkgitmin 1 ,
+.Lk http://interfaces.oxix.org/begit
+.Sh VERSION
+Part of version 0.1 of the begit interface.
+.Sh AUTHORS
+Tom Jones <tom.jones@bccx.com>
